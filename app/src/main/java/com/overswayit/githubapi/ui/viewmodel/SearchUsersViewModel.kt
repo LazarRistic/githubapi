@@ -1,11 +1,12 @@
 package com.overswayit.githubapi.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.overswayit.githubapi.repository.UsersRepository
+import android.util.Log
+import androidx.lifecycle.*
+import com.overswayit.githubapi.api.UserSearchResponse
 import com.overswayit.githubapi.entity.User
+import com.overswayit.githubapi.repository.UsersRepository
+import com.overswayit.githubapi.util.NetworkResponseHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -14,18 +15,56 @@ import kotlinx.coroutines.launch
 class SearchUsersViewModel(
     private val usersRepository: UsersRepository
 ) : ViewModel() {
+    @Suppress("PrivatePropertyName")
+    private val LOG_VIEW_MODEL = false
 
-    fun observeUsersByName(name: String): LiveData<List<User>> {
-        return usersRepository.observeUsersByName(name)
+    @Suppress("PrivatePropertyName")
+    private val LOG_TAG = "SearchUsersViewModel"
+
+
+    private val _query = MutableLiveData<String>()
+
+    val users: LiveData<List<User>> = _query.switchMap {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersRepository.deleteAll()
+            val fetchUsersResponse = usersRepository.fetchUsers(it)
+            NetworkResponseHandler.userResponseHandler(fetchUsersResponse, ::successfulFetchUsers, ::logDebug)
+        }
+
+        usersRepository.observeUsersByLogin(it)
     }
 
-    suspend fun getUsersByName(name: String): List<User> {
-        return usersRepository.getUsersByName(name)
+    fun observeUsersByName(): LiveData<List<User>> {
+        return users
     }
 
-    fun insert(vararg users: User) {
-        viewModelScope.launch {
-            usersRepository.insert(*users)
+    fun setQuery(name: String) {
+        _query.value = name
+    }
+
+    private fun successfulFetchUsers(usersSearchResponse: UserSearchResponse) {
+        viewModelScope.launch(Dispatchers.IO) {
+            for (user in usersSearchResponse.items) {
+                val fetchUserResponse = usersRepository.fetchUser(user.login)
+                usersRepository.insertOrIgnore(user)
+                NetworkResponseHandler.userResponseHandler(fetchUserResponse, ::insertSingle, ::logDebug)
+            }
+        }
+    }
+
+    private fun insertSingle(user: User) {
+        insert(user)
+    }
+
+    private fun insert(vararg users: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersRepository.insertOrReplace(*users)
+        }
+    }
+
+    private fun logDebug(error: String) {
+        if (LOG_VIEW_MODEL) {
+            Log.d(LOG_TAG, error)
         }
     }
 }

@@ -22,9 +22,9 @@ import org.junit.runner.RunWith
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class UsersLocalDataSourceTest {
+class DefaultUsersLocalDataSourceTest {
 
-    private lateinit var localDataSource: UsersLocalDataSource
+    private lateinit var localDataSource: DefaultUsersLocalDataSource
     private lateinit var database: GitHubAPIDatabase
 
     @get:Rule
@@ -33,7 +33,7 @@ class UsersLocalDataSourceTest {
     @Before
     fun setup() {
         database = Room.inMemoryDatabaseBuilder(getApplicationContext(), GitHubAPIDatabase::class.java).allowMainThreadQueries().build()
-        localDataSource = UsersLocalDataSource(database.userDao())
+        localDataSource = DefaultUsersLocalDataSource(database.userDao())
     }
 
     @After
@@ -44,8 +44,8 @@ class UsersLocalDataSourceTest {
     @Test
     fun insert_getUser() = runBlocking {
         // Given a new user saved in database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        localDataSource.insert(user)
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
+        localDataSource.insertOrIgnore(user)
 
         // When getting user by name
         val loadedUsers = localDataSource.getUsersByName("laza")
@@ -70,8 +70,8 @@ class UsersLocalDataSourceTest {
     @Test
     fun insert_observeUser() = runBlocking {
         // Given a new user saved in database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        localDataSource.insert(user)
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
+        localDataSource.insertOrIgnore(user)
 
         // When getting user by name
         val loadedUsers = localDataSource.observeUsersByName("laza").getOrAwaitValue()
@@ -96,8 +96,8 @@ class UsersLocalDataSourceTest {
     @Test
     fun delete_getUser() = runBlocking {
         // Given a new user saved in database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        localDataSource.insert(user)
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
+        localDataSource.insertOrIgnore(user)
 
         // When deleting the same user
         localDataSource.delete(user)
@@ -114,10 +114,10 @@ class UsersLocalDataSourceTest {
     @Test
     fun deleteAll_getUser_resultShouldBeEmpty() = runBlocking {
         // Given three new users in a databse
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
-        val user3 = User(3, "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3")
-        localDataSource.insert(user, user2, user3)
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
+        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
+        val user3 = User(3, "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3")
+        localDataSource.insertOrIgnore(user, user2, user3)
 
         // When deleting all users
         localDataSource.deleteAll()

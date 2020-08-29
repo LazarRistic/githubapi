@@ -2,32 +2,20 @@ package com.overswayit.githubapi.db
 
 import androidx.lifecycle.LiveData
 import com.overswayit.githubapi.entity.User
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 /**
- * Concrete implementation of a data source as a db.
+ * Main entry point for accessing users data from db.
  */
-class UsersLocalDataSource internal constructor(
-    private val userDao: UserDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : DefaultUsersLocalDataSource {
+interface UsersLocalDataSource {
+    suspend fun getUsersByName(name: String): List<User>
 
-    override suspend fun getUsersByName(name: String): List<User> = userDao.getUsersByName(name)
+    fun observeUsersByName(name: String): LiveData<List<User>>
 
-    override fun observeUsersByName(name: String): LiveData<List<User>> =  userDao.observeUsersByName(name)
+    suspend fun insertOrReplace(vararg users: User)
 
-    override suspend fun insert(vararg users: User) = withContext(ioDispatcher) {
-        userDao.insert(*users)
-    }
+    suspend fun insertOrIgnore(vararg users: User)
 
-    override suspend fun delete(vararg users: User) = withContext(ioDispatcher) {
-        userDao.delete(*users)
-    }
+    suspend fun delete(vararg users: User)
 
-    override suspend fun deleteAll() = withContext(ioDispatcher) {
-        userDao.deleteAll()
-    }
-
+    suspend fun deleteAll()
 }

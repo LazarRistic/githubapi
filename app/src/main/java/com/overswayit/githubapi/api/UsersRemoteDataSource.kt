@@ -1,15 +1,12 @@
 package com.overswayit.githubapi.api
 
-import androidx.lifecycle.LiveData
 import com.overswayit.githubapi.entity.User
+import retrofit2.Call
 
-class UsersRemoteDataSource() : DefaultUsersRemoteDataSource {
+interface UsersRemoteDataSource {
 
-    override fun observeUsersByName(name: String): LiveData<List<User>> {
-        TODO("Not yet implemented")
-    }
+    fun searchUsersByName(name: String): Call<UserSearchResponse>
 
-    override fun searchUsersByName(name: String): List<User> {
-        TODO("Not yet implemented")
-    }
+    fun searchUser(login: String): Call<User>
+
 }

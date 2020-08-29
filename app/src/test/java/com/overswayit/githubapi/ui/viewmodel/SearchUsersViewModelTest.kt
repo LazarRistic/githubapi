@@ -7,9 +7,9 @@ import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.nullValue
 import org.hamcrest.core.Is.`is`
 import org.junit.Before
 import org.junit.Rule
@@ -37,9 +37,9 @@ class SearchUsersViewModelTest {
         // Initialising the users to 3
         usersRepository = FakeUsersRepository()
 
-        val user1 = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
-        val user3 = User(3, "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3")
+        val user1 = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
+        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
+        val user3 = User(3, "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3")
 
         runBlocking {
             usersRepository.addUser(user1)
@@ -51,46 +51,36 @@ class SearchUsersViewModelTest {
     }
 
     @Test
-    fun `contains user with given name`() = runBlockingTest {
+    fun `observe existing user with a given name`() {
         // Given a user
-        val user = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
-
-        // When get users with name same as given user
-        val expectedUsers = usersViewModel.getUsersByName(user.name)
-        val expectedUser = expectedUsers.getOrNull(0)
-
-        // Then expected user should be same as user
-        assertThat(expectedUsers, `is` (not(emptyList())))
-        assertThat(expectedUsers.size, `is` (1))
-        assertThat(expectedUser, `is` (user))
-    }
-
-    @Test
-    fun `add new users`() = runBlockingTest {
-        // Given new user
-        val user = User(4, "laza4", "laza4", "laza4", "laza4", "laza4", "laza4", "laza4", "laza4")
-        usersViewModel.insert(user)
-
-        // When get list of users by name
-        val result = usersViewModel.getUsersByName("laza4")
-
-        // Then thew new user is there
-        assertThat(result.size, `is`(1))
-        assertThat(result[0], `is`(user))
-    }
-
-    @Test
-    fun `observes user with given name`() {
-        // Given a user
-        val user = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
+        val user = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
 
         // When observe users with name same as given user
-        val observedUsers = usersViewModel.observeUsersByName("laza2").getOrAwaitValue()
+        usersViewModel.setQuery(user.login)
+        val observedUsers = usersViewModel.observeUsersByName().getOrAwaitValue()
         val observedUser = observedUsers.getOrNull(0)
 
         // Then observed user should be same as user
         assertThat(observedUsers, `is` (not(emptyList())))
         assertThat(observedUsers.size, `is` (1))
         assertThat(observedUser, `is` (user))
+    }
+
+
+
+    @Test
+    fun `observe non existing user with a given name`() {
+        // Given a non existing user name
+        val nonExistingName = "non_existing_user"
+
+        // When observe users with non existing name
+        usersViewModel.setQuery(nonExistingName)
+        val observedUsers = usersViewModel.observeUsersByName().getOrAwaitValue()
+        val observedUser = observedUsers.getOrNull(0)
+
+        // Then observed user should be same as user
+        assertThat(observedUsers, `is` (emptyList()))
+        assertThat(observedUsers.size, `is` (0))
+        assertThat(observedUser, `is` (nullValue()))
     }
 }

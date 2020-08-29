@@ -1,29 +1,40 @@
 package com.overswayit.githubapi.repository
 
 import androidx.lifecycle.LiveData
-import com.overswayit.githubapi.api.DefaultUsersRemoteDataSource
-import com.overswayit.githubapi.db.DefaultUsersLocalDataSource
+import com.overswayit.githubapi.api.UserSearchResponse
+import com.overswayit.githubapi.api.UsersRemoteDataSource
+import com.overswayit.githubapi.db.UsersLocalDataSource
 import com.overswayit.githubapi.entity.User
 import kotlinx.coroutines.*
+import retrofit2.Response
 
 class DefaultUserRepository(
-    private val usersRemoteDataSource: DefaultUsersRemoteDataSource,
-    private val usersLocalDataSource: DefaultUsersLocalDataSource,
+    private val usersRemoteDataSource: UsersRemoteDataSource,
+    private val usersLocalDataSource: UsersLocalDataSource,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : UsersRepository {
 
-    override fun observeUsersByName(name: String): LiveData<List<User>> {
-        return usersLocalDataSource.observeUsersByName(name)
+    override fun observeUsersByLogin(login: String): LiveData<List<User>> {
+        return usersLocalDataSource.observeUsersByName(login)
     }
 
-    override suspend fun getUsersByName(name: String): List<User> {
-//        TODO: updateUsersFromRemoteDataSource(name)
-        return usersLocalDataSource.getUsersByName(name)
+    override fun fetchUsers(login: String): Response<UserSearchResponse> {
+        return usersRemoteDataSource.searchUsersByName(login).execute()
     }
 
-    override suspend fun insert(vararg users: User) {
+    override fun fetchUser(login: String): Response<User> {
+        return usersRemoteDataSource.searchUser(login).execute()
+    }
+
+    override suspend fun insertOrReplace(vararg users: User) {
         coroutineScope {
-            launch { usersLocalDataSource.insert(*users) }
+            launch { usersLocalDataSource.insertOrReplace(*users) }
+        }
+    }
+
+    override suspend fun insertOrIgnore(vararg users: User) {
+        coroutineScope {
+            launch { usersLocalDataSource.insertOrIgnore(*users) }
         }
     }
 
@@ -40,14 +51,4 @@ class DefaultUserRepository(
             }
         }
     }
-
-    private suspend fun updateUsersFromRemoteDataSource(name: String) {
-//        TODO: Code below
-//        val remoteUsers = usersRemoteDataSource.getUsersByName(name)
-//        usersLocalDataSource.deleteAll()
-//        remoteUsers.forEAch { user ->
-//          usersLocalDataSource.insert(user)
-//        }
-    }
-
 }

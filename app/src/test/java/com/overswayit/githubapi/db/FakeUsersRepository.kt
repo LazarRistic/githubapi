@@ -2,34 +2,25 @@ package com.overswayit.githubapi.db
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.overswayit.githubapi.api.UserSearchResponse
 import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.repository.UsersRepository
+import retrofit2.Response
+
 
 /**
  * Implementation of a remote data source with static access to the data for easy testing.
  */
 class FakeUsersRepository : UsersRepository {
 
-    var usersServicesData: LinkedHashMap<String, User> = LinkedHashMap()
+    private var usersServicesData: LinkedHashMap<String, User> = LinkedHashMap()
 
     private val observableUsers = MutableLiveData<List<User>>()
 
-    override suspend fun getUsersByName(name: String): List<User> {
-        val users: LinkedHashMap<String, User> = LinkedHashMap()
-
-        for (user in usersServicesData) {
-            if (user.key.contains(name)) {
-                users[user.key] = user.value
-            }
-        }
-
-        return users.values.toList()
-    }
-
-    override fun observeUsersByName(name: String): LiveData<List<User>> {
+    override fun observeUsersByLogin(login: String): LiveData<List<User>> {
         val userList = ArrayList<User>()
         for (user in usersServicesData.values) {
-            if (user.name.contains(name)) {
+            if (user.login.contains(login)) {
                 userList.add(user)
             }
         }
@@ -38,9 +29,45 @@ class FakeUsersRepository : UsersRepository {
         return observableUsers
     }
 
-    override suspend fun insert(vararg users: User) {
+    @Suppress("UNCHECKED_CAST")
+    override fun fetchUsers(login: String): Response<UserSearchResponse> {
+        val listUsers = ArrayList<User>()
+
+        for (user in usersServicesData) {
+            if (user.key.contains(login)) {
+                listUsers.add(user.value)
+            }
+        }
+
+        val body = UserSearchResponse(listUsers.size, listUsers.toList())
+        return Response.success(body)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun fetchUser(login: String): Response<User> {
+        var fetchedUser: User? = null
+
+        for (user in usersServicesData) {
+            if (user.key == login) {
+                fetchedUser = user.value
+                break
+            }
+        }
+
+        return Response.success(fetchedUser)
+    }
+
+    override suspend fun insertOrReplace(vararg users: User) {
         for (user in users) {
-            usersServicesData[user.name] = user
+            usersServicesData[user.login] = user
+        }
+    }
+
+    override suspend fun insertOrIgnore(vararg users: User) {
+        for (user in users) {
+            if (!usersServicesData.containsKey(user.login)) {
+                usersServicesData[user.login] = user
+            }
         }
     }
 
@@ -55,6 +82,6 @@ class FakeUsersRepository : UsersRepository {
     }
 
     fun addUser(user: User) {
-        usersServicesData[user.name] = user
+        usersServicesData[user.login] = user
     }
 }
