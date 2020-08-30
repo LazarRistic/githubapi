@@ -35,6 +35,8 @@ class UserProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
     private lateinit var nameText: String
     private lateinit var avatarUrl: String
 
+    private var reposClickListener: OnClickListener? = null
+
     init {
         val typedArray = context.obtainStyledAttributes(
             attrs,
@@ -54,12 +56,16 @@ class UserProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
         typedArray.recycle()
 
         repoHolderView.setOnClickListener {
-            Toast.makeText(context, "Repo button clicked", Toast.LENGTH_SHORT).show()
+            reposClickListener?.onClick(it)
         }
     }
 
+    fun setOnReposClickListener(clickListener: OnClickListener) {
+        reposClickListener = clickListener
+    }
+
     fun setUser(user: User) {
-        setAvatarUrl(user.url)
+        setAvatarUrl(user.avatarUri)
         setLogin(user.login)
 
         user.company?.let {
@@ -74,8 +80,10 @@ class UserProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
         }
     }
 
-    private fun setAvatarUrl(url: String) {
-        avatarUrl = url
+    private fun setAvatarUrl(url: String?) {
+        url?.let {
+            avatarUrl = url
+        }
 
         if (!TextUtils.isEmpty(avatarUrl)) {
             Glide.with(context).load(avatarUrl).circleCrop().into(object: CustomTarget<Drawable>() {

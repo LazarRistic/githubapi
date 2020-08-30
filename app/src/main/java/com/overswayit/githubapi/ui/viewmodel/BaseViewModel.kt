@@ -3,7 +3,7 @@ package com.overswayit.githubapi.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 
-abstract class BasicViewModel: ViewModel() {
+abstract class BaseViewModel: ViewModel() {
 
     @Suppress("PrivatePropertyName")
     private val LOG_VIEW_MODEL = false

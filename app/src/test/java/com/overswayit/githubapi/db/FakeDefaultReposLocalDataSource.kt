@@ -48,17 +48,14 @@ class FakeDefaultReposLocalDataSource(private var repos: MutableList<Repo> = mut
         return reposList
     }
 
-    override suspend fun insert(vararg repos: Repo) {
-        repos.forEach { newRepo ->
-            checkIfExistsAndResponses(
-                newRepo,
-                { index, repo ->
-                    this.repos.removeAt(index)
-                    this.repos.add(index, repo)
-                },
-                { repo -> this.repos.add(repo) })
-
-        }
+    override suspend fun insert(repo: Repo) {
+        checkIfExistsAndResponses(
+            repo,
+            { index, sameRepo ->
+                this.repos.removeAt(index)
+                this.repos.add(index, sameRepo)
+            },
+            { sameRepo -> this.repos.add(sameRepo) })
     }
 
     override suspend fun deleteAll() {

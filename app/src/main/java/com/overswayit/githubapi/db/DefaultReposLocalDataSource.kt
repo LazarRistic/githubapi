@@ -17,8 +17,8 @@ class DefaultReposLocalDataSource internal constructor(
     override fun observeRepos(ownerLogin: String): LiveData<List<Repo>> =
         repoDao.observeRepositoriesByLogin(ownerLogin)
 
-    override suspend fun insert(vararg repos: Repo) = withContext(ioDispatcher) {
-        repoDao.insert()
+    override suspend fun insert(repo: Repo) = withContext(ioDispatcher) {
+        repoDao.insert(repo)
     }
 
     override suspend fun deleteAll() = withContext(ioDispatcher) {

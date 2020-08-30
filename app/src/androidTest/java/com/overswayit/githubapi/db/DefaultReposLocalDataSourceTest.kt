@@ -62,7 +62,9 @@ class DefaultReposLocalDataSourceTest {
         val insertedRepo = Repo(1, "repo", "repo", "repo", insertedOwner, 1, 1, 1, 1)
         val insertedRepo2 = Repo(2, "repo2", "repo2", "repo2", insertedOwner, 2, 2, 2, 2)
         val insertedRepo3 = Repo(3, "repo3", "repo3", "repo3", insertedOwner, 3, 3, 3, 3)
-        localDataSource.insert(insertedRepo, insertedRepo2, insertedRepo3)
+        localDataSource.insert(insertedRepo)
+        localDataSource.insert(insertedRepo2)
+        localDataSource.insert(insertedRepo3)
 
         // When deleting all repos
         localDataSource.deleteAll()

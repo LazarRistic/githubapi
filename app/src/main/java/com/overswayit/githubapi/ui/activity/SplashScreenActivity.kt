@@ -17,7 +17,10 @@ class SplashScreenActivity : AppCompatActivity() {
     private lateinit var progressBar: ContentLoadingProgressBar
 
     private val viewModel by viewModels<SplashScreenViewModel> {
-        SplashScreenViewModelFactory((applicationContext as GitHubAPIApp).userRepository)
+        SplashScreenViewModelFactory(
+            (applicationContext as GitHubAPIApp).userRepository,
+            (applicationContext as GitHubAPIApp).repoRepository
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

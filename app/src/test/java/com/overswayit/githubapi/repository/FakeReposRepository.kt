@@ -60,11 +60,9 @@ class FakeReposRepository : ReposRepository {
         return Response.success(fetchedRepos.toList())
     }
 
-    override suspend fun insert(vararg repos: Repo) {
-        for (repo in repos) {
-            if (!reposServicesData.containsKey(repo.name)) {
-                addRepo(repo)
-            }
+    override suspend fun insert(repo: Repo) {
+        if (!reposServicesData.containsKey(repo.name)) {
+            addRepo(repo)
         }
     }
 

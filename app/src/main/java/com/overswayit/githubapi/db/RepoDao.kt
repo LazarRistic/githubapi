@@ -40,7 +40,7 @@ interface RepoDao {
      * @param repos the repo/repos to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg repos: Repo)
+    suspend fun insert(repos: Repo)
 
     /**
      * Delete all repos.

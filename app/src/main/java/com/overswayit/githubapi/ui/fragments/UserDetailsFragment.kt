@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.overswayit.githubapi.GitHubAPIApp
 import com.overswayit.githubapi.R
 import com.overswayit.githubapi.ui.activity.MainActivity
@@ -29,6 +31,7 @@ class UserDetailsFragment : Fragment() {
     private lateinit var followersTextView: TextView
     private lateinit var followingTextView: TextView
     private lateinit var reposTextView: TextView
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +51,7 @@ class UserDetailsFragment : Fragment() {
         followersTextView = view.findViewById(R.id.followers_text_view)
         followingTextView = view.findViewById(R.id.following_text_View)
         reposTextView = view.findViewById(R.id.public_repos_text_view)
+        navController = findNavController()
 
         viewModel.observeUser().observe(requireActivity(), {user ->
             userProfileView.setUser(user)
@@ -72,6 +76,10 @@ class UserDetailsFragment : Fragment() {
             followingTextView.text = "${user.following ?: 0}"
             reposTextView.text = "${user.repos ?: 0}"
         })
+
+        userProfileView.setOnReposClickListener{
+            navController.navigate(R.id.action_userDetailsFragment_to_reposFragment)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

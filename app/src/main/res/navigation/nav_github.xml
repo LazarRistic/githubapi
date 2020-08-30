@@ -11,10 +11,13 @@
         android:label="user_details_fragment"
         tools:layout="@layout/user_details_fragment" >
         <action
-            android:id="@+id/action_userDetailsFragment_to_placeholder"
-            app:destination="@id/placeholder" />
+            android:id="@+id/action_userDetailsFragment_to_reposFragment"
+            app:destination="@id/reposFragment" />
     </fragment>
-    <fragment android:id="@+id/placeholder" >
+    <fragment android:id="@+id/reposFragment"
+        android:name="com.overswayit.githubapi.ui.fragments.ReposFragment"
+        android:label="repos_fragment"
+        tools:layout="@layout/repos_fragment" >
         <action
             android:id="@+id/action_placeholder_to_placeholder2"
             app:destination="@id/placeholder2" />

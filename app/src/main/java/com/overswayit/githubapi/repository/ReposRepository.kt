@@ -15,7 +15,7 @@ interface ReposRepository {
 
     fun fetchRepos(ownerLogin: String): Response<List<Repo>>
 
-    suspend fun insert(vararg repos: Repo)
+    suspend fun insert(repo: Repo)
 
     suspend fun deleteAll()
 }

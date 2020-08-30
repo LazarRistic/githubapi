@@ -6,7 +6,7 @@ import com.overswayit.githubapi.repository.UsersRepository
 
 class UserDetailsViewModel(
     private val usersRepository: UsersRepository
-) : BasicViewModel() {
+) : BaseViewModel() {
 
     fun observeUser(login: String = userLogin) = usersRepository.observeUser(login)
 

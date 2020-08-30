@@ -25,8 +25,8 @@ class DefaultReposRepository(
         return reposRemoteDataSource.fetchRepos(ownerLogin).execute()
     }
 
-    override suspend fun insert(vararg repos: Repo) = withContext(ioDispatcher) {
-        reposLocalDataSource.insert(*repos)
+    override suspend fun insert(repo: Repo) = withContext(ioDispatcher) {
+        reposLocalDataSource.insert(repo)
     }
 
     override suspend fun deleteAll() = withContext(ioDispatcher) {

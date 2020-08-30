@@ -67,7 +67,8 @@ class RepoDaoTest {
         val insertedOwner = Repo.Owner("login", "laza")
         val insertedRepo = Repo(1, "repo", "repo", "repo", insertedOwner, 1, 1, 1, 1)
         val insertedRepo2 = Repo(2, "repo2", "repo2", "repo2", insertedOwner, 2, 2, 2, 2)
-        database.repoDao().insert(insertedRepo, insertedRepo2)
+        database.repoDao().insert(insertedRepo)
+        database.repoDao().insert(insertedRepo2)
 
         // When delete all repos
         database.repoDao().deleteAll()
