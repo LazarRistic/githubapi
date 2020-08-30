@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/userDetailsFragment"
         android:name="com.overswayit.githubapi.ui.fragments.UserDetailsFragment"
-        android:label="user_details_fragment"
+        android:label="@string/user_details_fragment_title"
         tools:layout="@layout/user_details_fragment" >
         <action
             android:id="@+id/action_userDetailsFragment_to_reposFragment"
@@ -16,7 +16,7 @@
     </fragment>
     <fragment android:id="@+id/reposFragment"
         android:name="com.overswayit.githubapi.ui.fragments.ReposFragment"
-        android:label="repos_fragment"
+        android:label="@string/repos_fragment_title"
         tools:layout="@layout/repos_fragment" >
         <action
             android:id="@+id/action_reposFragment_to_commitsFragment"
@@ -24,7 +24,7 @@
     </fragment>
     <fragment android:id="@+id/commitsFragment"
         android:name="com.overswayit.githubapi.ui.fragments.CommitsFragment"
-        android:label="commits_fragment"
+        android:label="@string/commits_fragment_title"
         tools:layout="@layout/commits_fragment">
         <argument
             android:name="repo"

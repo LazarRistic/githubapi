@@ -20,4 +20,7 @@
     <string name="status_time_days_ago">%1$sd</string>
     <string name="status_time_hours_ago">%1$sh</string>
     <string name="status_time_minutes_ago">%1$sm</string>
+    <string name="user_details_fragment_title">User Details</string>
+    <string name="repos_fragment_title">Repositories</string>
+    <string name="commits_fragment_title">Commits</string>
 </resources>
