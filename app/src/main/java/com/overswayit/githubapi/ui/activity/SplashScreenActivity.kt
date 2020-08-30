@@ -32,13 +32,7 @@ class SplashScreenActivity : AppCompatActivity() {
         viewModel.fetchInformation()
 
         val credentials = SharedPreference.getString("CREDENTIALS")
-        val intent: Intent
-
-        intent = if (TextUtils.isEmpty(credentials)) {
-            Intent(this@SplashScreenActivity, LoginActivity::class.java)
-        } else {
-            Intent(this@SplashScreenActivity, MainActivity::class.java)
-        }
+        val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
 
         Thread {
             doLoadAnimation()
