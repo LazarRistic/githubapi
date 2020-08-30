@@ -169,6 +169,13 @@
                 app:layout_constraintTop_toBottomOf="@id/blog_acc_info_item_view"
                 app:separatorVisibility="false"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/location_acc_info_item_view" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
