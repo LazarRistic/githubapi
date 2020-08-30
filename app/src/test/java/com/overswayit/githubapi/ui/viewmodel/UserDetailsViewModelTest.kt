@@ -2,14 +2,13 @@ package com.overswayit.githubapi.ui.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.overswayit.githubapi.MainCoroutineRule
-import com.overswayit.githubapi.db.FakeUsersRepository
+import com.overswayit.githubapi.repository.FakeUsersRepository
 import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers.*
-import org.hamcrest.core.Is
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

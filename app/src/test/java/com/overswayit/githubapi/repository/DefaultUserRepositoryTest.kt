@@ -1,11 +1,11 @@
-package com.overswayit.githubapi.db
+package com.overswayit.githubapi.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.overswayit.githubapi.MainCoroutineRule
-import com.overswayit.githubapi.api.FakeDefaultRemoteDataSource
+import com.overswayit.githubapi.api.FakeDefaultUsersRemoteDataSource
+import com.overswayit.githubapi.db.FakeDefaultUsersLocalDataSource
 import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.getOrAwaitValue
-import com.overswayit.githubapi.repository.DefaultUserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
@@ -26,7 +26,7 @@ class DefaultUserRepositoryTest {
     private val user3 = createNewUser(3, "laza3", 3)
     private val localUsers = listOf(user1, user2).sortedBy { it.id }
     private val remoteUsers = listOf(user3).sortedBy { it.id }
-    private lateinit var usersRemoteDataSource: FakeDefaultRemoteDataSource
+    private lateinit var usersRemoteRemoteDataSource: FakeDefaultUsersRemoteDataSource
     private lateinit var usersLocalRemoteDataSource: FakeDefaultUsersLocalDataSource
 
     // Class under test
@@ -42,11 +42,11 @@ class DefaultUserRepositoryTest {
 
     @Before
     fun createRepository() {
-        usersRemoteDataSource = FakeDefaultRemoteDataSource(ArrayList(remoteUsers))
+        usersRemoteRemoteDataSource = FakeDefaultUsersRemoteDataSource(ArrayList(remoteUsers))
         usersLocalRemoteDataSource = FakeDefaultUsersLocalDataSource(localUsers.toMutableList())
 
         // Get a reference to the class under test
-        usersRepository = DefaultUserRepository(usersRemoteDataSource, usersLocalRemoteDataSource)
+        usersRepository = DefaultUserRepository(usersRemoteRemoteDataSource, usersLocalRemoteDataSource)
     }
 
     @Test

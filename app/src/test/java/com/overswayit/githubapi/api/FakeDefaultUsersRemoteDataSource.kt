@@ -6,12 +6,11 @@ import org.mockito.Mockito.mock
 import retrofit2.Call
 import retrofit2.Response
 
-class FakeDefaultRemoteDataSource(private val users: ArrayList<User> = ArrayList()) :
+class FakeDefaultUsersRemoteDataSource(private val users: ArrayList<User> = ArrayList()) :
     UsersRemoteDataSource {
 
     private val fakeCredentials = "Basic FAKE_CREDENTIALS"
 
-    @Suppress("UNCHECKED_CAST")
     override fun searchUser(login: String): Call<User> {
         val service: GitHubAPIService = mock(GitHubAPIService::class.java)
 

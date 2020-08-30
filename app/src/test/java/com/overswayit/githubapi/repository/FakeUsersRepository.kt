@@ -1,9 +1,8 @@
-package com.overswayit.githubapi.db
+package com.overswayit.githubapi.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.overswayit.githubapi.entity.User
-import com.overswayit.githubapi.repository.UsersRepository
 import retrofit2.Response
 
 
@@ -22,11 +21,8 @@ class FakeUsersRepository : UsersRepository {
         for (user in usersServicesData.values) {
             if (user.login == login) {
                 fetchedUser = user
+                break
             }
-        }
-
-        fetchedUser?.let {
-
         }
 
         if (fetchedUser == null) {

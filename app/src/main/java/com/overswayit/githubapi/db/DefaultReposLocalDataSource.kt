@@ -6,10 +6,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class DefaultRepoLocalDataSource internal constructor(
+class DefaultReposLocalDataSource internal constructor(
     private val repoDao: RepoDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : RepoLocalDataSource {
+) : ReposLocalDataSource {
 
     override fun observeRepo(ownerLogin: String, name: String): LiveData<Repo> =
         repoDao.observeRepoByLoginAndName(ownerLogin, name)

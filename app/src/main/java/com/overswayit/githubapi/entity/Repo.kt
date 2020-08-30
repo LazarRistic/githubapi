@@ -21,7 +21,7 @@ data class Repo(
     val name: String,
     @ColumnInfo(name = "full_name") @SerializedName("full_name") val fullName: String,
     val description: String?,
-    @SerializedName("owner") @Embedded(prefix = "owner_") val user: Owner,
+    @SerializedName("owner") @Embedded(prefix = "owner_") val owner: Owner,
     @ColumnInfo(name ="stargazers_count") @SerializedName("stargazers_count") val stars: Int,
     val watchers: Int,
     val forks: Int,

@@ -3,13 +3,11 @@ package com.overswayit.githubapi
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
-import com.overswayit.githubapi.api.DefaultUsersRemoteDataSource
-import com.overswayit.githubapi.api.GitHubAPIService
-import com.overswayit.githubapi.api.UsersRemoteDataSource
-import com.overswayit.githubapi.db.DefaultUsersLocalDataSource
-import com.overswayit.githubapi.db.GitHubAPIDatabase
-import com.overswayit.githubapi.db.UsersLocalDataSource
+import com.overswayit.githubapi.api.*
+import com.overswayit.githubapi.db.*
+import com.overswayit.githubapi.repository.DefaultReposRepository
 import com.overswayit.githubapi.repository.DefaultUserRepository
+import com.overswayit.githubapi.repository.ReposRepository
 import com.overswayit.githubapi.repository.UsersRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,14 +26,36 @@ object ServiceLocator {
     var usersRepository: UsersRepository? = null
         @VisibleForTesting set
 
+    @Volatile
+    var reposRepository: ReposRepository? = null
+        @VisibleForTesting set
+
     fun provideGithubAPIService(): GitHubAPIService {
         return this.apiService ?: createApiService()
+    }
+
+    fun provideReposRepository(context: Context): ReposRepository{
+        synchronized(this) {
+            return reposRepository ?: createRepoRepository(context)
+        }
     }
 
     fun provideUsersRepository(context: Context): UsersRepository {
         synchronized(this) {
             return usersRepository ?: createUsersRepository(context)
         }
+    }
+
+    private fun createRepoRepository(context: Context): ReposRepository {
+        val newRepo =
+            DefaultReposRepository(createRepoRemoteDataSource(), createRepoLocalDataSource(context))
+        reposRepository = newRepo
+        return newRepo
+    }
+
+    private fun createRepoRemoteDataSource(): ReposRemoteDataSource {
+        val apiService = provideGithubAPIService()
+        return DefaultReposRemoteDataSource(apiService)
     }
 
     private fun createUsersRepository(context: Context): UsersRepository {
@@ -63,6 +83,11 @@ object ServiceLocator {
     private fun createUserLocalDataSource(context: Context): UsersLocalDataSource {
         val database = database ?: createDataBase(context)
         return DefaultUsersLocalDataSource(database.userDao())
+    }
+
+    private fun createRepoLocalDataSource(context: Context): ReposLocalDataSource {
+        val database = database ?: createDataBase(context)
+        return DefaultReposLocalDataSource(database.repoDao())
     }
 
     private fun createDataBase(context: Context): GitHubAPIDatabase {

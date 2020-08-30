@@ -21,9 +21,9 @@ import org.junit.runner.RunWith
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class DefaultRepoLocalDataSourceTest {
+class DefaultReposLocalDataSourceTest {
 
-    private lateinit var localDataSource: DefaultRepoLocalDataSource
+    private lateinit var localDataSource: DefaultReposLocalDataSource
     private lateinit var database: GitHubAPIDatabase
 
     @get:Rule
@@ -32,7 +32,7 @@ class DefaultRepoLocalDataSourceTest {
     @Before
     fun setup() {
         database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), GitHubAPIDatabase::class.java).allowMainThreadQueries().build()
-        localDataSource = DefaultRepoLocalDataSource(database.repoDao())
+        localDataSource = DefaultReposLocalDataSource(database.repoDao())
     }
 
     @After
