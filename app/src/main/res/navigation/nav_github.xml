@@ -19,8 +19,15 @@
         android:label="repos_fragment"
         tools:layout="@layout/repos_fragment" >
         <action
-            android:id="@+id/action_placeholder_to_placeholder2"
-            app:destination="@id/placeholder2" />
+            android:id="@+id/action_reposFragment_to_commitsFragment"
+            app:destination="@id/commitsFragment" />
     </fragment>
-    <fragment android:id="@+id/placeholder2" />
+    <fragment android:id="@+id/commitsFragment"
+        android:name="com.overswayit.githubapi.ui.fragments.CommitsFragment"
+        android:label="commits_fragment"
+        tools:layout="@layout/commits_fragment">
+        <argument
+            android:name="repo"
+            app:argType="string" />
+    </fragment>
 </navigation>

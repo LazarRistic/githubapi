@@ -1,5 +1,6 @@
 package com.overswayit.githubapi.api
 
+import com.google.gson.JsonArray
 import com.overswayit.githubapi.entity.Repo
 import com.overswayit.githubapi.entity.User
 import retrofit2.Call
@@ -30,4 +31,13 @@ interface GitHubAPIService {
         @Query("per_page") perPage: String = "100",
         @Query("page") page: String = "1"
     ): Call<List<Repo>>
+
+    @GET("repos/{login}/{repo}/commits")
+    fun fetchCommits(
+        @Header("Authorization") authorization: String?,
+        @Path("login") login: String,
+        @Path("repo") repo: String,
+        @Query("per_page") perPage: String = "100",
+        @Query("page") page: String = "1"
+    ): Call<JsonArray>
 }

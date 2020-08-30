@@ -5,10 +5,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import com.overswayit.githubapi.api.*
 import com.overswayit.githubapi.db.*
-import com.overswayit.githubapi.repository.DefaultReposRepository
-import com.overswayit.githubapi.repository.DefaultUserRepository
-import com.overswayit.githubapi.repository.ReposRepository
-import com.overswayit.githubapi.repository.UsersRepository
+import com.overswayit.githubapi.repository.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -30,8 +27,18 @@ object ServiceLocator {
     var reposRepository: ReposRepository? = null
         @VisibleForTesting set
 
+    @Volatile
+    var commitsRepository: CommitsRepository? = null
+        @VisibleForTesting set
+
     fun provideGithubAPIService(): GitHubAPIService {
         return this.apiService ?: createApiService()
+    }
+
+    fun provideCommitsRepository(): CommitsRepository {
+        synchronized(this) {
+            return commitsRepository ?: createCommitsRepository()
+        }
     }
 
     fun provideReposRepository(context: Context): ReposRepository{
@@ -44,6 +51,11 @@ object ServiceLocator {
         synchronized(this) {
             return usersRepository ?: createUsersRepository(context)
         }
+    }
+
+    private fun createCommitsRepository(): CommitsRepository {
+        val apiService = provideGithubAPIService()
+        return DefaultCommitsRepository(apiService)
     }
 
     private fun createRepoRepository(context: Context): ReposRepository {

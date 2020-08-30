@@ -4,6 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.overswayit.githubapi.R
 import com.overswayit.githubapi.entity.Repo
@@ -11,10 +14,14 @@ import com.overswayit.githubapi.entity.Repo
 class ReposAdapter: RecyclerView.Adapter<ReposAdapter.ReposAdapterViewHolder>() {
 
     private var repos: List<Repo> = emptyList()
+    private lateinit var navController: NavController
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReposAdapterViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.view_repos_item, parent, false)
+
+        navController = parent.findNavController()
+
         return ReposAdapterViewHolder(itemView)
     }
 
@@ -31,19 +38,24 @@ class ReposAdapter: RecyclerView.Adapter<ReposAdapter.ReposAdapterViewHolder>() 
         notifyDataSetChanged()
     }
 
-    class ReposAdapterViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class ReposAdapterViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-        lateinit var titleTextView: TextView
-        lateinit var descriptionTextView: TextView
-        lateinit var openIssuesTextView: TextView
-        lateinit var starsTextView: TextView
-        lateinit var forksTextView: TextView
-        lateinit var watchersTextView: TextView
+        private lateinit var titleTextView: TextView
+        private lateinit var descriptionTextView: TextView
+        private lateinit var openIssuesTextView: TextView
+        private lateinit var starsTextView: TextView
+        private lateinit var forksTextView: TextView
+        private lateinit var watchersTextView: TextView
 
         fun setUp(repo: Repo) {
-            findViews(repo)
+            findViews()
             defaultState()
             fillViews(repo)
+
+            itemView.setOnClickListener {
+                val bundle = bundleOf("repo" to repo.name)
+                navController.navigate(R.id.action_reposFragment_to_commitsFragment, bundle)
+            }
         }
 
         private fun fillViews(repo: Repo) {
@@ -64,7 +76,7 @@ class ReposAdapter: RecyclerView.Adapter<ReposAdapter.ReposAdapterViewHolder>() 
             watchersTextView.text = "0"
         }
 
-        private fun findViews(repo: Repo) {
+        private fun findViews() {
             titleTextView = itemView.findViewById(R.id.title_text_view)
             descriptionTextView = itemView.findViewById(R.id.description_text_view)
             openIssuesTextView = itemView.findViewById(R.id.open_issues_text_view)

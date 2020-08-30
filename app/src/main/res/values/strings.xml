@@ -11,4 +11,13 @@
     <string name="following">Following</string>
     <string name="repos">Repos</string>
     <string name="number_default">0</string>
+    <string name="commit_label">Commit:</string>
+    <string name="parents_label">Parents:</string>
+    <string name="authored">authored</string>
+    <string name="and">and</string>
+    <string name="committed">committed</string>
+    <string name="status_time_now">now</string>
+    <string name="status_time_days_ago">%1$sd</string>
+    <string name="status_time_hours_ago">%1$sh</string>
+    <string name="status_time_minutes_ago">%1$sm</string>
 </resources>
