@@ -1,38 +1,31 @@
 package com.overswayit.githubapi.ui.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import com.overswayit.githubapi.repository.CommitsRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class CommitsViewModel(
-    private val commitsRepository: CommitsRepository
+    commitsRepository: CommitsRepository,
+    repoName: String
 ) : BaseViewModel() {
 
-    private val _commits = MutableLiveData<List<CommitViewModel>>()
+    private var _commits = MutableLiveData<PagedList<CommitViewModel>>()
 
-    val commits: LiveData<List<CommitViewModel>> = _commits
+    var commits: LiveData<PagedList<CommitViewModel>> = _commits
 
-    fun fetchCommits(repoName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val commits = commitsRepository.fetchCommits(userLogin, repoName)
-
-            val viewModels = ArrayList<CommitViewModel>()
-
-            commits.forEach {
-                val viewModel = CommitViewModel(it)
-                viewModels.add(viewModel)
-            }
-
-            _commits.postValue(viewModels)
-        }
+    init {
+        commits = commitsRepository.fetchCommits(userLogin, repoName, ioScope)
     }
 }
 
 @Suppress("UNCHECKED_CAST")
 class CommitsViewModelFactory(
-    private val commitsRepository: CommitsRepository
+    private val commitsRepository: CommitsRepository,
+    private val repoName: String
 ) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>) =
-        (CommitsViewModel(commitsRepository) as T)
+        (CommitsViewModel(commitsRepository, repoName) as T)
 }

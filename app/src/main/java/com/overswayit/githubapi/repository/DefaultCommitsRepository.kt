@@ -1,32 +1,23 @@
 package com.overswayit.githubapi.repository
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.overswayit.githubapi.api.CommitsDataSource
+import com.overswayit.githubapi.api.CommitsDataSourceFactory
 import com.overswayit.githubapi.api.GitHubAPIService
-import com.overswayit.githubapi.entity.Commit
-import com.overswayit.githubapi.service.JsonService
-import com.overswayit.githubapi.sharedprefs.SharedPreference
+import com.overswayit.githubapi.ui.viewmodel.CommitViewModel
+import kotlinx.coroutines.CoroutineScope
 
 class DefaultCommitsRepository(
     private val gitHubAPIService: GitHubAPIService
 ): CommitsRepository {
 
-    private val credentials = SharedPreference.getString("CREDENTIALS")
+    private val pagedListConfig: PagedList.Config = (PagedList.Config.Builder()).setEnablePlaceholders(false).setPageSize(
+        CommitsDataSource.PAGE_SIZE).build()
 
-    override fun fetchCommits(ownerLogin: String, repo: String): List<Commit> {
-        val commits = ArrayList<Commit>()
-        val response = gitHubAPIService.fetchCommits(credentials, ownerLogin, repo).execute()
-
-        if (response.isSuccessful) {
-            response.body()?.let {
-                for (jsonElement in it) {
-                    val jsonObject = JsonService.asJsonObject(jsonElement)
-                    commits.add(Commit(jsonObject))
-                }
-            }
-        }
-
-        response.errorBody()?.string()?.let { Log.d("CommitsRepository", it) }
-
-        return commits
+    override fun fetchCommits(ownerLogin: String, repo: String, scope: CoroutineScope): LiveData<PagedList<CommitViewModel>> {
+        val commitsDataSourceFactory = CommitsDataSourceFactory(gitHubAPIService, repo, ownerLogin, scope)
+        return LivePagedListBuilder(commitsDataSourceFactory, pagedListConfig).build()
     }
 }

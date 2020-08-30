@@ -5,13 +5,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.overswayit.githubapi.R
 import com.overswayit.githubapi.ui.viewmodel.CommitViewModel
 
-class CommitsAdapter: RecyclerView.Adapter<CommitsAdapter.CommitsAdapterViewHolder>() {
+private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CommitViewModel>() {
+    override fun areItemsTheSame(oldItem: CommitViewModel, newItem: CommitViewModel): Boolean {
+        return oldItem.sha() == newItem.sha()
+    }
 
-    private var viewModels: List<CommitViewModel> = emptyList()
+    override fun areContentsTheSame(oldItem: CommitViewModel, newItem: CommitViewModel): Boolean {
+        return oldItem.sha() == newItem.sha()
+    }
+}
+
+class CommitsAdapter :
+    PagedListAdapter<CommitViewModel, CommitsAdapter.CommitsAdapterViewHolder>(REPO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommitsAdapterViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -21,20 +33,16 @@ class CommitsAdapter: RecyclerView.Adapter<CommitsAdapter.CommitsAdapterViewHold
     }
 
     override fun onBindViewHolder(holder: CommitsAdapterViewHolder, position: Int) {
-        val viewModel = viewModels[position]
+        val viewModel = getItem(position)
         holder.setUp(viewModel)
     }
 
-    override fun getItemCount(): Int {
-        return viewModels.size
+    fun setUp(viewModels: PagedList<CommitViewModel>?) {
+        if (viewModels != null)
+        submitList(viewModels)
     }
 
-    fun setUp(viewModels: List<CommitViewModel>) {
-        this.viewModels = viewModels
-        notifyDataSetChanged()
-    }
-
-    class CommitsAdapterViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class CommitsAdapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private lateinit var messageTextView: TextView
         private lateinit var dateTextView: TextView
@@ -43,18 +51,20 @@ class CommitsAdapter: RecyclerView.Adapter<CommitsAdapter.CommitsAdapterViewHold
         private lateinit var shaTextView: TextView
         private lateinit var parentsTextView: TextView
 
-        fun setUp(viewModel: CommitViewModel) {
+        fun setUp(viewModel: CommitViewModel?) {
             findViews()
             fillViews(viewModel)
         }
 
-        private fun fillViews(viewModel: CommitViewModel) {
-            messageTextView.text = viewModel.message()
-            dateTextView.text = viewModel.date(itemView.context)
-            authorTextView.text = viewModel.author()
-            shaTextView.text = viewModel.sha()
-            parentsTextView.text = viewModel.parentsSha()
-            viewModel.authorImage(itemView.context, authorImageView)
+        private fun fillViews(viewModel: CommitViewModel?) {
+            viewModel?.let {
+                messageTextView.text = viewModel.message()
+                dateTextView.text = viewModel.date(itemView.context)
+                authorTextView.text = viewModel.author()
+                shaTextView.text = viewModel.sha()
+                parentsTextView.text = viewModel.parentsSha()
+                viewModel.authorImage(itemView.context, authorImageView)
+            }
         }
 
         private fun findViews() {

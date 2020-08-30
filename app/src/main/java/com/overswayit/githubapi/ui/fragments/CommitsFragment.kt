@@ -22,19 +22,18 @@ class CommitsFragment : Fragment() {
     private lateinit var adapter: CommitsAdapter
 
     private val viewModel: CommitsViewModel by viewModels {
-        CommitsViewModelFactory(((requireActivity() as MainActivity).applicationContext as GitHubAPIApp).commitsRepository)
+        var repo = ""
+        arguments?.let {
+            val safeArgs = CommitsFragmentArgs.fromBundle(it)
+            repo = safeArgs.repo
+        }
+
+        CommitsViewModelFactory(((requireActivity() as MainActivity).applicationContext as GitHubAPIApp).commitsRepository, repo)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         recyclerView = view.findViewById(R.id.recycler_view)
-
-        arguments?.let {
-            val safeArgs = CommitsFragmentArgs.fromBundle(it)
-            val repo = safeArgs.repo
-            viewModel.fetchCommits(repo)
-        }
     }
 
     override fun onCreateView(
@@ -58,10 +57,8 @@ class CommitsFragment : Fragment() {
 
 
         viewModel.commits.observe(requireActivity(), {
-            adapter.setUp(it)
+            adapter.submitList(it)
         })
-
-
     }
 
 }
