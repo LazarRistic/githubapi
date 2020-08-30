@@ -10,8 +10,7 @@ import com.overswayit.githubapi.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -43,105 +42,75 @@ class UsersDaoTest {
     }
 
     @Test
-    fun insertUserAndGetByName() = runBlockingTest {
-        // Given Insert user
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        database.userDao().insertOrIgnore(user)
-
-        // When Get the user by id from the database
-        val loadedUsers = database.userDao().getUsersByName(user.login)
-        val loaded = loadedUsers.getOrNull(0)
-
-        // Then The loaded data contains the expected values.
-        assertThat(loadedUsers.size, `is` (1))
-        assertThat(loaded as User, notNullValue())
-        assertThat(loaded.id, `is` (user.id))
-        assertThat(loaded.login, `is` (user.login))
-        assertThat(loaded.avatarUri, `is` (user.avatarUri))
-        assertThat(loaded.name, `is` (user.name))
-        assertThat(loaded.company, `is` (user.company))
-        assertThat(loaded.bio, `is` (user.bio))
-        assertThat(loaded.email, `is` (user.email))
-        assertThat(loaded.location, `is` (user.location))
-        assertThat(loaded.blog, `is` (user.blog))
-    }
-
-    @Test
     fun insertUserAndObserveByName() = runBlockingTest {
         // Given Insert user
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        database.userDao().insertOrIgnore(user)
+        val insertedUser = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
+        database.userDao().insert(insertedUser)
 
         // When Get the user by id from the database
-        val observedUsers = database.userDao().observeUsersByName(user.login).getOrAwaitValue()
-        val observed = observedUsers.getOrNull(0)
+        val loadedUser = database.userDao().observeUser(insertedUser.login).getOrAwaitValue()
 
-        // Then The loaded data contains the expected values.
-        assertThat(observedUsers.size, `is` (1))
-        assertThat(observed as User, notNullValue())
-        assertThat(observed.id, `is` (user.id))
-        assertThat(observed.login, `is` (user.login))
-        assertThat(observed.avatarUri, `is` (user.avatarUri))
-        assertThat(observed.name, `is` (user.name))
-        assertThat(observed.company, `is` (user.company))
-        assertThat(observed.bio, `is` (user.bio))
-        assertThat(observed.email, `is` (user.email))
-        assertThat(observed.location, `is` (user.location))
-        assertThat(observed.blog, `is` (user.blog))
+        // Then The loaded user is inserted user
+        assertThat(loadedUser, notNullValue())
+        assertThat(loadedUser.id, `is` (insertedUser.id))
+        assertThat(loadedUser.login, `is` (insertedUser.login))
+        assertThat(loadedUser.avatarUri, `is` (insertedUser.avatarUri))
+        assertThat(loadedUser.name, `is` (insertedUser.name))
+        assertThat(loadedUser.company, `is` (insertedUser.company))
+        assertThat(loadedUser.bio, `is` (insertedUser.bio))
+        assertThat(loadedUser.email, `is` (insertedUser.email))
+        assertThat(loadedUser.location, `is` (insertedUser.location))
+        assertThat(loadedUser.blog, `is` (insertedUser.blog))
     }
 
     @Test
-    fun addOneUserAndDeleteThemAndThenGetByName() = runBlockingTest {
+    fun addOneUserAndDeleteThemAndThenObserveUser() = runBlockingTest {
         // Given Insert user
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        database.userDao().insertOrIgnore(user)
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
+        database.userDao().insert(user)
 
         // When delete that user
         database.userDao().delete(user)
 
         // and get the user by id from the database
-        val loaded = database.userDao().observeUsersByName(user.login).getOrAwaitValue()
+        val loaded = database.userDao().observeUser(user.login).getOrAwaitValue()
 
         // Then the loaded data should be empty
-        assertThat(loaded.isNullOrEmpty(), `is` (true))
+        assertThat(loaded, `is` (nullValue()))
     }
 
     @Test
     fun addTwoUsersAndDeleteFirstOneThenGetByName() = runBlockingTest {
-        // Given Insert user
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
-        database.userDao().insertOrIgnore(user, user2)
+        // Given Insert users
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
+        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", 1, 1, 1)
+        database.userDao().insert(user, user2)
 
         // When delete that user
         database.userDao().delete(user)
 
-        // and get the user by id from the database
-        val loadedUsers = database.userDao().observeUsersByName("%${user2.login}%").getOrAwaitValue()
-        val loaded = loadedUsers.getOrNull(0)
+        // and get the user2 by login from the database
+        val loadedUser = database.userDao().observeUser(user2.login).getOrAwaitValue()
 
-        // Then the loaded data should be first user
-        assertThat(loadedUsers.size, `is`(1))
-        assertThat(loadedUsers.contains(user2), `is`(true))
-        assertThat(loadedUsers.contains(user), `is`(false))
-        assertThat(loaded, `is` (notNullValue()))
-        assertThat(loaded, `is` (user2))
+        // Then the loaded user is user2
+        assertThat(loadedUser, `is` (notNullValue()))
+        assertThat(loadedUser, `is` (user2))
     }
 
     @Test
-    fun deleteAllUsersThenGetByName() = runBlockingTest {
-        // Given Insert user
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza")
-        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2")
-        database.userDao().insertOrIgnore(user, user2)
+    fun deleteAllUsersThenObserveUser() = runBlockingTest {
+        // Given Insert users
+        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
+        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", 2, 2, 2)
+        database.userDao().insert(user, user2)
 
         // When delete that user
         database.userDao().deleteAll()
 
-        // and get the user by id from the database
-        val loaded = database.userDao().observeUsersByName("%${user2.login}%").getOrAwaitValue()
+        // and get the user2 by login from the database
+        val loaded = database.userDao().observeUser(user2.login).getOrAwaitValue()
 
-        // Then the loaded data should be first user
-        assertThat(loaded.isNullOrEmpty(), `is` (true))
+        // Then the loaded user is null
+        assertThat(loaded, `is` (nullValue()))
     }
 }

@@ -13,7 +13,7 @@ class NetworkResponseHandlerTest {
     @Test
     fun userResponseHandler_givenSuccessResponseReturnedUserListIsSameAsGiven() {
         // Given response
-        val givenUserList = listOf(User(1, "user", "user", "user", "user", "user", "user", "user", "user", "user"))
+        val givenUserList = listOf(User(1, "user", "user", "user", "user", "user", "user", "user", "user", "user", 1, 1, 1))
         val success = Response.success(givenUserList)
 
         // When in successful list is user list

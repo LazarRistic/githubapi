@@ -9,10 +9,6 @@ class DefaultUsersRemoteDataSource(private val gitHubAPIService: GitHubAPIServic
 
     private val credentials = SharedPreference.getString("CREDENTIALS")
 
-    override fun searchUsersByName(name: String): Call<UserSearchResponse> {
-        return gitHubAPIService.searchUsers(credentials, name)
-    }
-
     override fun searchUser(login: String): Call<User> {
         return gitHubAPIService.searchUser(credentials, login)
     }

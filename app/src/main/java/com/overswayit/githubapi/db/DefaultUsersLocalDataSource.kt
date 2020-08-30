@@ -14,16 +14,10 @@ class DefaultUsersLocalDataSource internal constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : UsersLocalDataSource {
 
-    override suspend fun getUsersByName(name: String): List<User> = userDao.getUsersByName(name)
+    override fun observeUser(login: String): LiveData<User> = userDao.observeUser(login)
 
-    override fun observeUsersByName(name: String): LiveData<List<User>> =  userDao.observeUsersByName("%$name%")
-
-    override suspend fun insertOrReplace(vararg users: User) = withContext(ioDispatcher) {
-        userDao.insertOrReplace(*users)
-    }
-
-    override suspend fun insertOrIgnore(vararg users: User) {
-        userDao.insertOrIgnore(*users)
+    override suspend fun insert(vararg users: User) = withContext(ioDispatcher) {
+        userDao.insert(*users)
     }
 
     override suspend fun delete(vararg users: User) = withContext(ioDispatcher) {

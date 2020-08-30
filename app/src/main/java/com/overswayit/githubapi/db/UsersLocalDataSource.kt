@@ -7,13 +7,10 @@ import com.overswayit.githubapi.entity.User
  * Main entry point for accessing users data from db.
  */
 interface UsersLocalDataSource {
-    suspend fun getUsersByName(name: String): List<User>
 
-    fun observeUsersByName(name: String): LiveData<List<User>>
+    fun observeUser(login: String): LiveData<User>
 
-    suspend fun insertOrReplace(vararg users: User)
-
-    suspend fun insertOrIgnore(vararg users: User)
+    suspend fun insert(vararg users: User)
 
     suspend fun delete(vararg users: User)
 

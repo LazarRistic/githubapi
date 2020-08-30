@@ -11,46 +11,28 @@ class FakeDefaultUsersLocalDataSource(private var users: MutableList<User> = mut
 
     private val _query = MutableLiveData("la")
 
-    private val userList: LiveData<List<User>> = _query.map {
-        val newUsersList: MutableList<User> = mutableListOf()
+    private val userList: LiveData<User> = _query.map {
+        val newUsers: MutableLiveData<User> = MutableLiveData()
 
         for (user in users) {
-            if (user.login.contains(it)) {
-                newUsersList.add(user)
+            if (user.login == it) {
+                newUsers.postValue(user)
+                break
             }
         }
 
-        newUsersList
+        newUsers.value!!
     }
 
-    override suspend fun getUsersByName(name: String): List<User> {
-        if (users.isNullOrEmpty()) {
-            return emptyList()
-        }
-
-        return users.toList()
-    }
-
-    override fun observeUsersByName(name: String): LiveData<List<User>> {
+    override fun observeUser(login: String): LiveData<User> {
         runBlocking {
-            _query.value = name
+            _query.value = login
         }
 
         return userList
     }
 
-    override suspend fun insertOrReplace(vararg users: User) {
-        users.forEach { newUser ->
-            checkIfExistsAndResponses(newUser,
-                { i, user ->
-                    this.users.removeAt(i)
-                    this.users.add(i, user)
-                },
-                { user -> this.users.add(user) })
-        }
-    }
-
-    override suspend fun insertOrIgnore(vararg users: User) {
+    override suspend fun insert(vararg users: User) {
         users.forEach { newUser ->
             checkIfExistsAndResponses(newUser, { _, _ -> }, { user -> this.users.add(user) })
         }

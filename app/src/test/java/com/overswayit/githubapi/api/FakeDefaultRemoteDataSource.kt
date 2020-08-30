@@ -12,24 +12,6 @@ class FakeDefaultRemoteDataSource(private val users: ArrayList<User> = ArrayList
     private val fakeCredentials = "Basic FAKE_CREDENTIALS"
 
     @Suppress("UNCHECKED_CAST")
-    override fun searchUsersByName(name: String): Call<UserSearchResponse> {
-        val listUsers = ArrayList<User>()
-
-        for (user in users) {
-            if (user.login.contains(name)) {
-                listUsers.add(user)
-            }
-        }
-
-        val service: GitHubAPIService = mock(GitHubAPIService::class.java)
-        val result = UserSearchResponse(listUsers.size, listUsers)
-        val call = createSuccessfulCall(result)
-        Mockito.`when`(service.searchUsers(fakeCredentials, name)).thenReturn(call)
-
-        return service.searchUsers(fakeCredentials, name)
-    }
-
-    @Suppress("UNCHECKED_CAST")
     override fun searchUser(login: String): Call<User> {
         val service: GitHubAPIService = mock(GitHubAPIService::class.java)
 

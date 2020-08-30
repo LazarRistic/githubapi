@@ -16,5 +16,8 @@ data class User(
     val bio: String?,
     val email: String?,
     val location: String?,
-    val blog: String?
+    val blog: String?,
+    val followers: Int?,
+    val following: Int?,
+    @ColumnInfo(name = "public_repos") @SerializedName("public_repos") val repos: Int?
 )

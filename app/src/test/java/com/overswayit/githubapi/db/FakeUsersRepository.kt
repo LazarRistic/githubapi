@@ -2,7 +2,6 @@ package com.overswayit.githubapi.db
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.overswayit.githubapi.api.UserSearchResponse
 import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.repository.UsersRepository
 import retrofit2.Response
@@ -15,32 +14,28 @@ class FakeUsersRepository : UsersRepository {
 
     private var usersServicesData: LinkedHashMap<String, User> = LinkedHashMap()
 
-    private val observableUsers = MutableLiveData<List<User>>()
+    private val observableUser = MutableLiveData<User>()
 
-    override fun observeUsersByLogin(login: String): LiveData<List<User>> {
-        val userList = ArrayList<User>()
+    override fun observeUser(login: String): LiveData<User> {
+        var fetchedUser: User? = null
+
         for (user in usersServicesData.values) {
-            if (user.login.contains(login)) {
-                userList.add(user)
+            if (user.login == login) {
+                fetchedUser = user
             }
         }
 
-        observableUsers.postValue(userList)
-        return observableUsers
-    }
+        fetchedUser?.let {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun fetchUsers(login: String): Response<UserSearchResponse> {
-        val listUsers = ArrayList<User>()
-
-        for (user in usersServicesData) {
-            if (user.key.contains(login)) {
-                listUsers.add(user.value)
-            }
         }
 
-        val body = UserSearchResponse(listUsers.size, listUsers.toList())
-        return Response.success(body)
+        if (fetchedUser == null) {
+            observableUser.postValue(null)
+        } else {
+            observableUser.postValue(fetchedUser)
+        }
+
+        return observableUser
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -57,13 +52,7 @@ class FakeUsersRepository : UsersRepository {
         return Response.success(fetchedUser)
     }
 
-    override suspend fun insertOrReplace(vararg users: User) {
-        for (user in users) {
-            usersServicesData[user.login] = user
-        }
-    }
-
-    override suspend fun insertOrIgnore(vararg users: User) {
+    override suspend fun insert(vararg users: User) {
         for (user in users) {
             if (!usersServicesData.containsKey(user.login)) {
                 usersServicesData[user.login] = user

@@ -11,38 +11,21 @@ import com.overswayit.githubapi.entity.User
 interface UserDao {
 
     /**
-     * Get list of users with given name LIKE.
+     * Observes user with given login
      *
-     * @param name the users name.
-     * @return the list of users with name LIKE.
+     * @param login the users login.
+     * @return the user with login = [login].
      */
-    @Query("SELECT * FROM users WHERE login LIKE :name ORDER BY login DESC")
-    suspend fun getUsersByName(name: String): List<User>
-
-    /**
-     * Observes list of users with given name LIKE.
-     *
-     * @param name the users name.
-     * @return the list of users with name LIKE.
-     */
-    @Query("SELECT * FROM users WHERE login LIKE :name ORDER BY login DESC")
-    fun observeUsersByName(name: String): LiveData<List<User>>
+    @Query("SELECT * FROM users WHERE login = :login")
+    fun observeUser(login: String): LiveData<User>
 
     /**
      * Insert a user/users in the database. If the user already exists, replace it.
      *
      * @param users the user/users to be inserted.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplace(vararg users: User)
-
-    /**
-     * Insert a user/users in the database. If the user already exists, ignore it.
-     *
-     * @param users the user/users to be inserted.
-     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnore(vararg users: User)
+    suspend fun insert(vararg users: User)
 
     /**
      * Delete a user/users

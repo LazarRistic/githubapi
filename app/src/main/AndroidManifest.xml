@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.SplashScreenActivity"
+        <activity android:name=".ui.activity.MainActivity"></activity>
+        <activity
+            android:name=".ui.activity.SplashScreenActivity"
             android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +23,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.LoginActivity" />
-        <activity android:name=".ui.activity.SearchUsersActivity" />
     </application>
 
 </manifest>

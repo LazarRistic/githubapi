@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_github"
+    app:startDestination="@id/userDetailsFragment">
+
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="com.overswayit.githubapi.ui.fragments.UserDetailsFragment"
+        android:label="user_details_fragment"
+        tools:layout="@layout/user_details_fragment" >
+        <action
+            android:id="@+id/action_userDetailsFragment_to_placeholder"
+            app:destination="@id/placeholder" />
+    </fragment>
+    <fragment android:id="@+id/placeholder" >
+        <action
+            android:id="@+id/action_placeholder_to_placeholder2"
+            app:destination="@id/placeholder2" />
+    </fragment>
+    <fragment android:id="@+id/placeholder2" />
+</navigation>

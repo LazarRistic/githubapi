@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.textfield.TextInputLayout
 import com.overswayit.githubapi.GitHubAPIApp
 import com.overswayit.githubapi.R
 import com.overswayit.githubapi.sharedprefs.SharedPreference
@@ -48,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
                                 SharedPreference.save("CREDENTIALS", credentials)
 
                                 val intent =
-                                    Intent(this@LoginActivity, SearchUsersActivity::class.java)
+                                    Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
                             } else {
                                 Toast.makeText(

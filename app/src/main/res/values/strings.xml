@@ -5,4 +5,9 @@
     <string name="login">login</string>
     <string name="splash_logo_content_description">splash_logo_content_description</string>
     <string name="user_avatar_url">user_avatar_url</string>
+    <string name="repositories">Repositories</string>
+    <string name="account_information">Account Information</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="repos">Repos</string>
 </resources>

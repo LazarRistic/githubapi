@@ -70,7 +70,7 @@ object ServiceLocator {
             context.applicationContext,
             GitHubAPIDatabase::class.java,
             "githubapi.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
         database = result
         return result
     }

@@ -12,14 +12,6 @@ interface GitHubAPIService {
     @GET("user/repos")
     fun testCredentials(@Header("Authorization") authorization: String?): Call<Any>
 
-    @GET("search/users")
-    fun searchUsers(
-        @Header("Authorization") authorization: String?,
-        @Query("q") query: String,
-        @Query("sort") sort: String = "login",
-        @Query("order") order: String = "desc"
-    ): Call<UserSearchResponse>
-
     @GET("users/{login}")
     fun searchUser(
         @Header("Authorization") authorization: String?,
