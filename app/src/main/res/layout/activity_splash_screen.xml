@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.SplashScreenActivity">
 
     <ImageView
         android:id="@+id/logo"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:src="@drawable/ic_github"
@@ -25,8 +25,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         style="?android:attr/progressBarStyleHorizontal"
-        android:background="#FFFFFF"
-        android:progressTint="#000000"
-        android:indeterminateTint="#FFFFFF"/>
+        android:background="@color/white"
+        android:progressTint="@color/black"
+        android:indeterminateTint="@color/white"/>
 
 </RelativeLayout>

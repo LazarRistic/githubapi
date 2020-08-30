@@ -64,15 +64,16 @@ class AccInfoItemView @JvmOverloads constructor(context: Context, attrs: Attribu
     private fun getValues(typedArray: TypedArray) {
         label = typedArray.getString(R.styleable.AccInfoItemView_label).toString()
         text = typedArray.getString(R.styleable.AccInfoItemView_text).toString()
-        separatorVisibility = typedArray.getBoolean(R.styleable.AccInfoItemView_separatorVisibility, true)
+        separatorVisibility =
+            typedArray.getBoolean(R.styleable.AccInfoItemView_separatorVisibility, true)
 
         labelColor = typedArray.getColor(
             R.styleable.AccInfoItemView_labelColor,
-            Color.parseColor("#9B9B9B")
+            context.getColor(R.color.label_gray)
         )
         textColor = typedArray.getColor(
             R.styleable.AccInfoItemView_textColor,
-            Color.parseColor("#4A4A4A")
+            context.getColor(R.color.title_text)
         )
     }
 

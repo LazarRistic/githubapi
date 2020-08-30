@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/label"
@@ -8,12 +9,12 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="Name"
-        android:textColor="#9B9B9B"
+        android:textColor="@color/label_gray"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/acc_info_holder" />
+        app:layout_constraintTop_toBottomOf="@id/acc_info_holder"
+        tools:text="Name" />
 
     <TextView
         android:id="@+id/text_holder"
@@ -22,11 +23,11 @@
         android:paddingStart="16dp"
         android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:text="Lazar Ristic"
-        android:textColor="#4A4A4A"
+        android:textColor="@color/title_text"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Lazar Ristic" />
 
     <View
         android:id="@+id/separator"
