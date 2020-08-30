@@ -23,4 +23,5 @@
     <string name="user_details_fragment_title">User Details</string>
     <string name="repos_fragment_title">Repositories</string>
     <string name="commits_fragment_title">Commits</string>
+    <string name="na">N/A</string>
 </resources>

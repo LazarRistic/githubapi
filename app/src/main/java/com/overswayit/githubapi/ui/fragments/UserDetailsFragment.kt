@@ -84,10 +84,10 @@ class UserDetailsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        nameAccInfoItemView.text = "NEKO IME"
-        emailAccInfoItemView.text = "NEKO EMAIL"
-        blogAccInfoItemView.text = "NEKO PHONE"
-        locationAccInfoItemView.text = "NEKO ADDRESS"
+        nameAccInfoItemView.text = requireContext().getString(R.string.na)
+        emailAccInfoItemView.text = requireContext().getString(R.string.na)
+        blogAccInfoItemView.text = requireContext().getString(R.string.na)
+        locationAccInfoItemView.text = requireContext().getString(R.string.na)
     }
 
 }
