@@ -40,10 +40,7 @@ class CommitsDataSource(
                 login = ownerLogin
             ).execute()
 
-
-
             val viewModels = parseResponse(response)
-
             callback.onResult(viewModels, null, FIRST_PAGE + 1)
         }
     }
