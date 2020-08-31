@@ -7,8 +7,6 @@ import retrofit2.Response
 
 class FakeDefaultReposRemoteDataSource(private val repos: ArrayList<Repo> = ArrayList()) : ReposRemoteDataSource {
 
-    private val fakeCredentials = "Basic FAKE_CREDENTIALS"
-
     override fun fetchRepos(ownerLogin: String): Call<List<Repo>> {
         val repos = ArrayList<Repo>()
 
@@ -20,9 +18,9 @@ class FakeDefaultReposRemoteDataSource(private val repos: ArrayList<Repo> = Arra
 
         val service: GitHubAPIService = Mockito.mock(GitHubAPIService::class.java)
         val call = createSuccessfulCall(repos.toList())
-        Mockito.`when`(service.fetchRepos(fakeCredentials, ownerLogin)).thenReturn(call)
+        Mockito.`when`(service.fetchRepos(ownerLogin)).thenReturn(call)
 
-        return service.fetchRepos(fakeCredentials, ownerLogin)
+        return service.fetchRepos(ownerLogin)
     }
 
     @Suppress("UNCHECKED_CAST")

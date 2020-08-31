@@ -5,7 +5,6 @@ import androidx.paging.PageKeyedDataSource
 import com.google.gson.JsonArray
 import com.overswayit.githubapi.entity.Commit
 import com.overswayit.githubapi.service.JsonService
-import com.overswayit.githubapi.sharedprefs.SharedPreference
 import com.overswayit.githubapi.ui.viewmodel.CommitViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,15 +28,12 @@ class CommitsDataSource(
     @Suppress("PrivatePropertyName")
     private val FIRST_PAGE = 1
 
-    private val credentials = SharedPreference.getString("CREDENTIALS")
-
     override fun loadInitial(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, CommitViewModel>
     ) {
         scope.launch(Dispatchers.IO) {
             val response = gitHubAPIService.fetchCommits(
-                credentials,
                 perPage = "$PAGE_SIZE",
                 page = "$FIRST_PAGE",
                 repo = repo,
@@ -56,7 +52,6 @@ class CommitsDataSource(
         scope.launch(Dispatchers.IO) {
 
             val response = gitHubAPIService.fetchCommits(
-                credentials,
                 perPage = "$PAGE_SIZE",
                 page = "${params.key}",
                 repo = repo,
@@ -80,7 +75,6 @@ class CommitsDataSource(
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, CommitViewModel>) {
         scope.launch(Dispatchers.IO) {
             val response = gitHubAPIService.fetchCommits(
-                credentials,
                 perPage = "$PAGE_SIZE",
                 page = "${params.key}",
                 repo = repo,

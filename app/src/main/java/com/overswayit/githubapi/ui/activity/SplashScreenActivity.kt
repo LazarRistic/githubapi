@@ -2,13 +2,11 @@ package com.overswayit.githubapi.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.ContentLoadingProgressBar
 import com.overswayit.githubapi.GitHubAPIApp
 import com.overswayit.githubapi.R
-import com.overswayit.githubapi.sharedprefs.SharedPreference
 import com.overswayit.githubapi.ui.viewmodel.SplashScreenViewModel
 import com.overswayit.githubapi.ui.viewmodel.SplashScreenViewModelFactory
 
@@ -31,7 +29,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
         viewModel.fetchInformation()
 
-        val credentials = SharedPreference.getString("CREDENTIALS")
         val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
 
         Thread {

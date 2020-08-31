@@ -9,20 +9,18 @@ import retrofit2.Response
 class FakeDefaultUsersRemoteDataSource(private val users: ArrayList<User> = ArrayList()) :
     UsersRemoteDataSource {
 
-    private val fakeCredentials = "Basic FAKE_CREDENTIALS"
-
     override fun searchUser(login: String): Call<User> {
         val service: GitHubAPIService = mock(GitHubAPIService::class.java)
 
         for (user in users) {
             if (user.login == login) {
                 val call = createSuccessfulCall(user)
-                Mockito.`when`(service.searchUser(fakeCredentials, login)).thenReturn(call)
+                Mockito.`when`(service.searchUser(login)).thenReturn(call)
                 break
             }
         }
 
-        return service.searchUser(fakeCredentials, login)
+        return service.searchUser(login)
     }
 
     @Suppress("UNCHECKED_CAST")

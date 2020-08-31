@@ -11,12 +11,8 @@ import retrofit2.http.Query
 
 interface GitHubAPIService {
 
-    @GET("user/repos")
-    fun testCredentials(@Header("Authorization") authorization: String?): Call<Any>
-
     @GET("users/{login}")
     fun searchUser(
-        @Header("Authorization") authorization: String?,
         @Path("login") login: String,
         @Query("sort") sort: String = "login",
         @Query("order") order: String = "desc"
@@ -24,7 +20,6 @@ interface GitHubAPIService {
 
     @GET("users/{login}/repos")
     fun fetchRepos(
-        @Header("Authorization") authorization: String?,
         @Path("login") login: String,
         @Query("sort") sort: String = "stargazers_count",
         @Query("order") order: String = "desc",
@@ -34,7 +29,6 @@ interface GitHubAPIService {
 
     @GET("repos/{login}/{repo}/commits")
     fun fetchCommits(
-        @Header("Authorization") authorization: String?,
         @Path("login") login: String,
         @Path("repo") repo: String,
         @Query("per_page") perPage: String = "100",
