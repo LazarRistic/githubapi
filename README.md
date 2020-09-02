@@ -13,7 +13,7 @@ This projects contains two activities and three fragments. First Activity is Spl
 - Kotlin, Programing language
 - Kotlin Coroutines, Concurrency design pattern
 - MVVM, Architectural pattern
-- LiveData, Observable pattern
+- rxJava, Observable pattern
 - Retrofit2, HTTP client platform
 - Room, SQLite database
 - Android Jetpack&#39;s Navigation compenent
