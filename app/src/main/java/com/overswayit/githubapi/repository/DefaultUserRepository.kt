@@ -1,43 +1,35 @@
 package com.overswayit.githubapi.repository
 
-import androidx.lifecycle.LiveData
 import com.overswayit.githubapi.api.UsersRemoteDataSource
 import com.overswayit.githubapi.db.UsersLocalDataSource
 import com.overswayit.githubapi.entity.User
-import kotlinx.coroutines.*
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.Response
 
 class DefaultUserRepository(
     private val usersRemoteDataSource: UsersRemoteDataSource,
-    private val usersLocalDataSource: UsersLocalDataSource,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val usersLocalDataSource: UsersLocalDataSource
 ) : UsersRepository {
 
-    override fun observeUser(login: String): LiveData<User> {
+    override fun observeUser(login: String): Observable<User> {
         return usersLocalDataSource.observeUser(login)
     }
 
-    override fun fetchUser(login: String): Response<User> {
-        return usersRemoteDataSource.searchUser(login).execute()
+    override fun fetchUser(login: String): Single<User> {
+        return usersRemoteDataSource.searchUser(login)
     }
 
-    override suspend fun insert(vararg users: User) {
-        coroutineScope {
-            launch { usersLocalDataSource.insert(*users) }
-        }
+    override fun insert(vararg users: User): Completable {
+        return usersLocalDataSource.insert(*users)
     }
 
-    override suspend fun delete(vararg users: User) {
-        coroutineScope {
-            launch { usersLocalDataSource.delete(*users) }
-        }
+    override fun delete(vararg users: User): Completable {
+        return usersLocalDataSource.delete(*users)
     }
 
-    override suspend fun deleteAll() {
-        withContext(ioDispatcher) {
-            coroutineScope {
-                launch { usersLocalDataSource.deleteAll() }
-            }
-        }
+    override fun deleteAll(): Completable {
+        return usersLocalDataSource.deleteAll()
     }
 }

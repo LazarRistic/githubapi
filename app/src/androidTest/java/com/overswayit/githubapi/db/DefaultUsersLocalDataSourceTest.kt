@@ -6,16 +6,17 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.overswayit.githubapi.entity.User
-import com.overswayit.githubapi.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.nullValue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.function.Predicate
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -30,7 +31,10 @@ class DefaultUsersLocalDataSourceTest {
 
     @Before
     fun setup() {
-        database = Room.inMemoryDatabaseBuilder(getApplicationContext(), GitHubAPIDatabase::class.java).allowMainThreadQueries().build()
+        database = Room.inMemoryDatabaseBuilder(
+            getApplicationContext(),
+            GitHubAPIDatabase::class.java
+        ).allowMainThreadQueries().build()
         localDataSource = DefaultUsersLocalDataSource(database.userDao())
     }
 
@@ -40,58 +44,120 @@ class DefaultUsersLocalDataSourceTest {
     }
 
     @Test
-    fun insert_observeUser() = runBlocking {
+    fun insert_observeUser() {
         // Given a new user saved in database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
-        localDataSource.insert(user)
+        val user = User(
+            1,
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            1,
+            1,
+            1
+        )
+        localDataSource.insert(user).blockingAwait()
 
         // When observe user by login
-        val loaded = localDataSource.observeUser("laza").getOrAwaitValue()
+        val loaded = localDataSource.observeUser("laza").test()
 
         // Then same user is returned
-        assertThat(loaded, `is`(notNullValue()))
-        assertThat(loaded.id, `is`(1))
-        assertThat(loaded.login, `is`("laza"))
-        assertThat(loaded.avatarUri, `is`("laza"))
-        assertThat(loaded.name, `is`("laza"))
-        assertThat(loaded.company, `is`("laza"))
-        assertThat(loaded.bio, `is`("laza"))
-        assertThat(loaded.email, `is`("laza"))
-        assertThat(loaded.location, `is`("laza"))
-        assertThat(loaded.blog, `is`("laza"))
+        loaded.assertValue(user)
     }
 
     @Test
-    fun delete_observeUser_resultIsNullValue() = runBlocking {
+    fun delete_observeUser_resultIsNullValue() {
         // Given a new user saved in database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
-        localDataSource.insert(user)
+        val user = User(
+            1,
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            1,
+            1,
+            1
+        )
+        localDataSource.insert(user).blockingAwait()
 
         // When deleting the same user
-        localDataSource.delete(user)
+        localDataSource.delete(user).blockingAwait()
 
         // And observe user by name
-        val observedUser = localDataSource.observeUser("laza").getOrAwaitValue()
+        val observedUser = localDataSource.observeUser("laza").test()
 
         // Then observed user is null value
-        assertThat(observedUser, `is`(nullValue()))
+        observedUser.assertEmpty()
+
     }
 
     @Test
-    fun deleteAll_getUser_resultIsNullValue() = runBlocking {
+    fun deleteAll_getUser_resultIsNullValue() {
         // Given three new users in a database
-        val user = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1 ,1 ,1)
-        val user2 = User(2, "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", "laza2", 2, 2, 2)
-        val user3 = User(3, "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", "laza3", 3, 3, 3)
-        localDataSource.insert(user, user2, user3)
+        val user = User(
+            1,
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            "laza",
+            1,
+            1,
+            1
+        )
+        val user2 = User(
+            2,
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            "laza2",
+            2,
+            2,
+            2
+        )
+        val user3 = User(
+            3,
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            "laza3",
+            3,
+            3,
+            3
+        )
+        localDataSource.insert(user, user2, user3).blockingAwait()
 
         // When deleting all users
-        localDataSource.deleteAll()
+        localDataSource.deleteAll().blockingAwait()
 
         // And observe user by name
-        val observedUser = localDataSource.observeUser("laza").getOrAwaitValue()
+        val observedUser = localDataSource.observeUser("laza").test()
 
         // Then observed user is null value
-        assertThat(observedUser, `is`(nullValue()))
+        observedUser.assertEmpty()
     }
 }

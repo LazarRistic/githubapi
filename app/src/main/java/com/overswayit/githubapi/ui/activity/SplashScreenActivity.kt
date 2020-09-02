@@ -2,6 +2,7 @@ package com.overswayit.githubapi.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.ContentLoadingProgressBar
@@ -9,10 +10,16 @@ import com.overswayit.githubapi.GitHubAPIApp
 import com.overswayit.githubapi.R
 import com.overswayit.githubapi.ui.viewmodel.SplashScreenViewModel
 import com.overswayit.githubapi.ui.viewmodel.SplashScreenViewModelFactory
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.net.InetAddress
 
-class SplashScreenActivity : AppCompatActivity() {
+class SplashScreenActivity : BaseActivity() {
 
     private lateinit var progressBar: ContentLoadingProgressBar
+
+    private val disposable = CompositeDisposable()
 
     private val viewModel by viewModels<SplashScreenViewModel> {
         SplashScreenViewModelFactory(
@@ -36,6 +43,22 @@ class SplashScreenActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }.start()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        disposable.add(viewModel.error
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Toast.makeText(applicationContext, it, Toast.LENGTH_LONG).show()
+            })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposable.clear()
     }
 
     private fun doLoadAnimation() {

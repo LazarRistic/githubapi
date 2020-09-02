@@ -11,17 +11,24 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.overswayit.githubapi.GitHubAPIApp
 import com.overswayit.githubapi.R
+import com.overswayit.githubapi.entity.User
+import com.overswayit.githubapi.ui.activity.BaseActivity
 import com.overswayit.githubapi.ui.activity.MainActivity
 import com.overswayit.githubapi.ui.view.AccInfoItemView
 import com.overswayit.githubapi.ui.view.UserProfileView
 import com.overswayit.githubapi.ui.viewmodel.UserDetailsViewModel
 import com.overswayit.githubapi.ui.viewmodel.UserDetailsViewModelFactory
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class UserDetailsFragment : Fragment() {
 
     private val viewModel: UserDetailsViewModel by viewModels {
         UserDetailsViewModelFactory((((requireActivity() as MainActivity).applicationContext) as GitHubAPIApp).userRepository)
     }
+
+    private val disposable = CompositeDisposable()
 
     private lateinit var userProfileView: UserProfileView
     private lateinit var nameAccInfoItemView: AccInfoItemView
@@ -53,33 +60,21 @@ class UserDetailsFragment : Fragment() {
         reposTextView = view.findViewById(R.id.public_repos_text_view)
         navController = findNavController()
 
-        viewModel.observeUser().observe(requireActivity(), {user ->
-            userProfileView.setUser(user)
-
-            user.name?.let {
-                nameAccInfoItemView.text = it
-            }
-
-            user.email?.let {
-                emailAccInfoItemView.text = it
-            }
-
-            user.blog?.let {
-                blogAccInfoItemView.text = it
-            }
-
-            user.location?.let {
-                locationAccInfoItemView.text = it
-            }
-
-            followersTextView.text = "${user.followers ?: 0}"
-            followingTextView.text = "${user.following ?: 0}"
-            reposTextView.text = "${user.repos ?: 0}"
-        })
-
-        userProfileView.setOnReposClickListener{
+        userProfileView.setOnReposClickListener {
             navController.navigate(R.id.action_userDetailsFragment_to_reposFragment)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        subscribeToUserDetails()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        disposable.clear()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -88,6 +83,39 @@ class UserDetailsFragment : Fragment() {
         emailAccInfoItemView.text = requireContext().getString(R.string.na)
         blogAccInfoItemView.text = requireContext().getString(R.string.na)
         locationAccInfoItemView.text = requireContext().getString(R.string.na)
+    }
+
+    fun subscribeToUserDetails() {
+        disposable.add(viewModel.observeUser()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                fillView(it)
+            })
+    }
+
+    private fun fillView(user: User) {
+        userProfileView.setUser(user)
+
+        user.name?.let {
+            nameAccInfoItemView.text = it
+        }
+
+        user.email?.let {
+            emailAccInfoItemView.text = it
+        }
+
+        user.blog?.let {
+            blogAccInfoItemView.text = it
+        }
+
+        user.location?.let {
+            locationAccInfoItemView.text = it
+        }
+
+        followersTextView.text = "${user.followers ?: 0}"
+        followingTextView.text = "${user.following ?: 0}"
+        reposTextView.text = "${user.repos ?: 0}"
     }
 
 }

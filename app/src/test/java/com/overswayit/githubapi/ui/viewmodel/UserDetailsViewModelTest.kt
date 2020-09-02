@@ -46,14 +46,13 @@ class UserDetailsViewModelTest {
     @Test
     fun `observe existing user with a given login`() {
         // Given a user login
-        val login = "laza"
+        val user1 = User(1, "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", "laza", 1, 1, 1)
 
         // When observe user
-        val observedUser = viewModel.observeUser(login).getOrAwaitValue()
+        val observedUser = viewModel.observeUser(user1.login).test()
 
         // Then observed user login should be same as login
-        MatcherAssert.assertThat(observedUser, not(nullValue()))
-        MatcherAssert.assertThat(observedUser.login, `is`(login))
+        observedUser.assertValue(user1)
     }
 
     @Test
@@ -62,9 +61,9 @@ class UserDetailsViewModelTest {
         val nonExistingLogin = "non_existing_user"
 
         // When observe user with non existing name
-        val observedUser = viewModel.observeUser(nonExistingLogin).getOrAwaitValue()
+        val observedUser = viewModel.observeUser(nonExistingLogin).test()
 
         // Then observed user is not non existing name
-        MatcherAssert.assertThat(observedUser, `is` (nullValue()))
+        observedUser.assertComplete()
     }
 }

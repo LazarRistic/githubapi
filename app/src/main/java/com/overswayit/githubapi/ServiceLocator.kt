@@ -7,6 +7,7 @@ import com.overswayit.githubapi.api.*
 import com.overswayit.githubapi.db.*
 import com.overswayit.githubapi.repository.*
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
@@ -41,7 +42,7 @@ object ServiceLocator {
         }
     }
 
-    fun provideReposRepository(context: Context): ReposRepository{
+    fun provideReposRepository(context: Context): ReposRepository {
         synchronized(this) {
             return reposRepository ?: createRepoRepository(context)
         }
@@ -86,6 +87,7 @@ object ServiceLocator {
         val result = Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
             .create(GitHubAPIService::class.java)
         apiService = result

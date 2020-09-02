@@ -1,18 +1,19 @@
 package com.overswayit.githubapi.db
 
-import androidx.lifecycle.LiveData
 import com.overswayit.githubapi.entity.User
+import io.reactivex.Completable
+import io.reactivex.Observable
 
 /**
  * Main entry point for accessing users data from db.
  */
 interface UsersLocalDataSource {
 
-    fun observeUser(login: String): LiveData<User>
+    fun observeUser(login: String): Observable<User>
 
-    suspend fun insert(vararg users: User)
+    fun insert(vararg users: User): Completable
 
-    suspend fun delete(vararg users: User)
+    fun delete(vararg users: User): Completable
 
-    suspend fun deleteAll()
+    fun deleteAll(): Completable
 }

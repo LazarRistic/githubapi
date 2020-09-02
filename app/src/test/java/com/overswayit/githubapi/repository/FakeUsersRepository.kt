@@ -1,9 +1,10 @@
 package com.overswayit.githubapi.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.overswayit.githubapi.entity.User
-import retrofit2.Response
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 
 
 /**
@@ -13,9 +14,7 @@ class FakeUsersRepository : UsersRepository {
 
     private var usersServicesData: LinkedHashMap<String, User> = LinkedHashMap()
 
-    private val observableUser = MutableLiveData<User>()
-
-    override fun observeUser(login: String): LiveData<User> {
+    override fun observeUser(login: String): Observable<User> {
         var fetchedUser: User? = null
 
         for (user in usersServicesData.values) {
@@ -25,17 +24,15 @@ class FakeUsersRepository : UsersRepository {
             }
         }
 
-        if (fetchedUser == null) {
-            observableUser.postValue(null)
-        } else {
-            observableUser.postValue(fetchedUser)
+        return if (fetchedUser == null) {
+            Observable.empty()
+        } else{
+            Observable.just(fetchedUser)
         }
-
-        return observableUser
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun fetchUser(login: String): Response<User> {
+    override fun fetchUser(login: String): Single<User> {
         var fetchedUser: User? = null
 
         for (user in usersServicesData) {
@@ -45,25 +42,55 @@ class FakeUsersRepository : UsersRepository {
             }
         }
 
-        return Response.success(fetchedUser)
+        return Single.just(fetchedUser)
     }
 
-    override suspend fun insert(vararg users: User) {
+    override fun insert(vararg users: User): Completable {
+        var completed = true
+
         for (user in users) {
             if (!usersServicesData.containsKey(user.login)) {
                 usersServicesData[user.login] = user
             }
+
+            if (usersServicesData[user.login] != user) {
+                completed = false
+            }
+        }
+
+        return if (completed) {
+            Completable.complete()
+        } else {
+            Completable.never()
         }
     }
 
-    override suspend fun delete(vararg users: User) {
+    override fun delete(vararg users: User): Completable {
+        var completed = true
+
         for (user in users) {
             usersServicesData.remove(user.name)
+
+            if (usersServicesData.containsKey(user.name)) {
+                completed = false
+            }
+        }
+
+        return if (completed) {
+            Completable.complete()
+        } else {
+            Completable.never()
         }
     }
 
-    override suspend fun deleteAll() {
+    override fun deleteAll(): Completable {
         usersServicesData.clear()
+
+        return if (usersServicesData.size > 0) {
+            Completable.never()
+        } else {
+            Completable.complete()
+        }
     }
 
     fun addUser(user: User) {

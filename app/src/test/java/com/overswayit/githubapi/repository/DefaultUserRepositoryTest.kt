@@ -56,14 +56,12 @@ class DefaultUserRepositoryTest {
         val expectedResult = fetchUser(login, remoteUsers)
 
         // When - fetching user by login
-        val response = usersRepository.fetchUser(login)
-        val responseIsSuccessful = response.isSuccessful
-        val fetchedUser = response.body()
+        val response = usersRepository.fetchUser(login).test()
+
 
         // Then - response should be successful
         // and fetched user should be equal to expected result
-        assertThat(responseIsSuccessful, `is`(true))
-        assertThat(fetchedUser, IsEqual(expectedResult))
+        response.assertValue(expectedResult)
     }
 
     @Test
@@ -72,39 +70,36 @@ class DefaultUserRepositoryTest {
         val expectedUser = user2
 
         // When - observe user by login
-        val observedUser = usersRepository.observeUser(expectedUser.login).getOrAwaitValue()
+        val observedUser = usersRepository.observeUser(expectedUser.login).test()
 
         // Then - observed user is expected user
-        assertThat(observedUser, not(nullValue()))
-        assertThat(observedUser, `is`(expectedUser))
+        observedUser.assertValue(expectedUser)
     }
 
     @Test
-    fun insert_insertNewUserAndCheckIfUserIsInDatabase() = mainCoroutineRule.runBlockingTest {
+    fun insert_insertNewUserAndCheckIfUserIsInDatabase() {
         // Given - new user
         val newUser = createNewUser(4, "new_user", 4)
 
         // When - inserted in db and observed db
-        usersRepository.insert(newUser)
-        val observedUser = usersRepository.observeUser(newUser.login).getOrAwaitValue()
+        usersRepository.insert(newUser).blockingAwait()
+        val observedUser = usersRepository.observeUser(newUser.login).test()
 
         // Then - observed user is new user
-        assertThat(observedUser, not(nullValue()))
-        assertThat(observedUser, `is`(newUser))
+        observedUser.assertValue(newUser)
     }
 
     @Test
-    fun insertOrIgnore_insertSameUserWithUpdatedValuesAndCheckIfReplacedUserIsNotInDatabase() = mainCoroutineRule.runBlockingTest {
+    fun insertOrIgnore_insertSameUserWithUpdatedValuesAndCheckIfReplacedUserIsNotInDatabase() {
         // Given - updated user
         val replacedUser = createNewUser(user2.id, user2.login, "new_user", 8)
 
         // When - inserted in db and observed db
-        usersRepository.insert(replacedUser)
-        val observedUser = usersRepository.observeUser(replacedUser.login).getOrAwaitValue()
+        usersRepository.insert(replacedUser).blockingAwait()
+        val observedUser = usersRepository.observeUser(replacedUser.login).test()
 
         // Then - observed user is not replaced user
-        assertThat(observedUser, not(nullValue()))
-        assertThat(observedUser, not(replacedUser))
+        observedUser.assertNever(replacedUser)
     }
 
     @Suppress("SameParameterValue")

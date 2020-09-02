@@ -8,6 +8,11 @@ import com.overswayit.githubapi.entity.User
 import com.overswayit.githubapi.repository.ReposRepository
 import com.overswayit.githubapi.repository.UsersRepository
 import com.overswayit.githubapi.util.NetworkResponseHandler
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,10 +21,14 @@ class SplashScreenViewModel(
     private val reposRepository: ReposRepository
 ) : BaseViewModel() {
 
+    private val disposable = CompositeDisposable()
+
     fun fetchInformation(login: String = userLogin) {
         fetchUser(login)
         fetchRepos(login)
     }
+
+    val error: BehaviorSubject<String> = BehaviorSubject.create()
 
     private fun fetchRepos(login: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -29,10 +38,21 @@ class SplashScreenViewModel(
     }
 
     private fun fetchUser(login: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = userRepository.fetchUser(login)
-            NetworkResponseHandler.userResponseHandler(response, ::insertUser, ::logDebug)
-        }
+        disposable.add(
+            userRepository.fetchUser(login)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    insertUser(it)
+                }, {
+                    val error = it.message.toString()
+                    logDebug(error)
+                    this.error.onNext(error)
+                })
+        )
+
+//        NetworkResponseHandler.userResponseHandler(response, ::insertUser, ::logDebug)
+
     }
 
     private fun insertRepos(repos: List<Repo>) {
@@ -44,9 +64,23 @@ class SplashScreenViewModel(
     }
 
     private fun insertUser(user: User) {
-        viewModelScope.launch(Dispatchers.IO) {
+        disposable.add(
             userRepository.insert(user)
-        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    logDebug("Insert user: $user succeeded")
+                }, { error ->
+                    logDebug("$error")
+                    this.error.onNext("$error")
+                })
+        )
+
+    }
+
+    override fun onCleared() {
+        disposable.dispose()
+        super.onCleared()
     }
 }
 

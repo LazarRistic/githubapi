@@ -1,8 +1,9 @@
 package com.overswayit.githubapi.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.overswayit.githubapi.entity.User
+import io.reactivex.Completable
+import io.reactivex.Observable
 
 /**
  * Data Access Object for the users table.
@@ -17,7 +18,7 @@ interface UserDao {
      * @return the user with login = [login].
      */
     @Query("SELECT * FROM users WHERE login = :login")
-    fun observeUser(login: String): LiveData<User>
+    fun observeUser(login: String): Observable<User>
 
     /**
      * Insert a user/users in the database. If the user already exists, replace it.
@@ -25,17 +26,17 @@ interface UserDao {
      * @param users the user/users to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(vararg users: User)
+    fun insert(vararg users: User): Completable
 
     /**
      * Delete a user/users
      */
     @Delete
-    suspend fun delete(vararg user: User)
+    fun delete(vararg user: User): Completable
 
     /**
      * Delete all users.
      */
     @Query("DELETE FROM users")
-    suspend fun deleteAll()
+    fun deleteAll(): Completable
 }

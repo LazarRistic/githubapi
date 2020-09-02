@@ -3,9 +3,9 @@ package com.overswayit.githubapi.api
 import com.google.gson.JsonArray
 import com.overswayit.githubapi.entity.Repo
 import com.overswayit.githubapi.entity.User
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -16,7 +16,7 @@ interface GitHubAPIService {
         @Path("login") login: String,
         @Query("sort") sort: String = "login",
         @Query("order") order: String = "desc"
-    ): Call<User>
+    ): Single<User>
 
     @GET("users/{login}/repos")
     fun fetchRepos(
